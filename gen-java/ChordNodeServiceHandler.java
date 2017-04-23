@@ -13,6 +13,7 @@ import org.apache.thrift.TException;
 import com.sun.org.apache.xalan.internal.xsltc.runtime.Node;
 
 import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 import java.io.*;
 import java.math.BigInteger;
 
@@ -30,8 +31,11 @@ public class ChordNodeServiceHandler implements ChordNodeService.Iface{
     private boolean isMaster;
     public static int m = 32;
     public TreeMap<Integer,ChordNode> nodeMap;
+    private ReentrantLock lock = new ReentrantLock();
+    public PrintWriter writer;
+    private String nodename;
     
-    public ChordNodeServiceHandler(String hostname, int portnumber){
+    public ChordNodeServiceHandler(String hostname, int portnumber, String nodename){
         map = new HashMap<String,String>();
         this.hostname = hostname;
         this.portnumber = portnumber;
@@ -41,6 +45,13 @@ public class ChordNodeServiceHandler implements ChordNodeService.Iface{
         nodeMap = new TreeMap<Integer,ChordNode>();
         successor = new ChordNode();
         fingerTable = new ArrayList<FingerTableInfo>();
+        this.nodename = nodename;
+        
+        try {
+        	writer = new PrintWriter(nodename+".txt","UTF-8");
+        } catch (UnsupportedEncodingException e){}
+        catch (FileNotFoundException e) {}
+        
         
     }
 
@@ -88,23 +99,28 @@ public class ChordNodeServiceHandler implements ChordNodeService.Iface{
     }
 
     public ChordNode get_successor() {
+    	writer.println("Inside get_successor");
         return successor;
     }
 
     public ChordNode get_predecessor() {
+    	writer.println("Inside get_predecessor");
         return predecessor;
     }
 
     public void set_predecessor(ChordNode node) {
+    	writer.println("Inside set_predecessor");
         this.predecessor = node;
     }
     
-    public void insert(String word, String meaning){
+    public void insert(String word, String meaning, boolean traceFlag){
+    	writer.println("Inside insert");
         map.put(word,meaning);
         System.out.println("Inserted word " + word);
     }
 
-    public String lookup(String word){
+    public String lookup(String word, boolean traceFlag){
+    	writer.println("Inside lookup");
         if(map.containsKey(word)){
             return map.get(word);
         }
@@ -113,14 +129,17 @@ public class ChordNodeServiceHandler implements ChordNodeService.Iface{
     }
 
     public void printFingerTable(){
+    	writer.println("Inside printFingerTable");
     	
+		writer.println("Printing finger table:");
     	for (int i = 1; i <= m; i++) {
-        	System.out.println("Iteration: "+ i+ ": "+fingerTable.get(i).start+ ": "+ fingerTable.get(i).node.getKey());
+        	writer.println("Finger : "+ i+ ": "+fingerTable.get(i).start+ ": "+ fingerTable.get(i).node.getKey());
+        	writer.flush();
         }
     }
     
     public String find_node(int key, boolean traceFlag){
-    	
+    	writer.println("Inside find_node");
     	ChordNode n = find_successorDHT(key);
     	
     	return n.getHostname() + ":" + n.getPortnumber();
@@ -153,7 +172,7 @@ public class ChordNodeServiceHandler implements ChordNodeService.Iface{
                 this.nodeMap = new TreeMap<Integer,ChordNode>(nodeinfo.getNodeMap());
                 
                 constructInitTable();
-                
+                client.join_done();
                 System.out.println("New Node Finger Table after Initialization: ");
                 printFingerTable();
                 
@@ -204,6 +223,7 @@ public class ChordNodeServiceHandler implements ChordNodeService.Iface{
     }
     
     public NodeInfo join (String url) {
+    	lock.lock();
     	NodeInfo info = new NodeInfo();
     	
     	info.setKey(getHashCode(url));
@@ -234,6 +254,11 @@ public class ChordNodeServiceHandler implements ChordNodeService.Iface{
         return info;
     }
     
+    
+    public void join_done(){
+    	lock.unlock();
+    }
+    
     private FingerTableInfo createFingerTableInfo (int start, ChordNode n) {
     	
     	return new FingerTableInfo(start, n);
@@ -241,10 +266,15 @@ public class ChordNodeServiceHandler implements ChordNodeService.Iface{
     }
     
     public ChordNode find_successorDHT (int key) {
+    	writer.println("Inside find_successor for key: " + key);
     	ChordNode temp = null;
     	boolean successorfound = false;
     	
-    	for(Map.Entry<Integer,ChordNode> entry : nodeMap.entrySet()){
+    	ChordNode pred = find_predecessorDHT(key); 
+    	
+    	return call_get_successor (pred.getHostname(), pred.getPortnumber());
+    	
+    	/*for(Map.Entry<Integer,ChordNode> entry : nodeMap.entrySet()){
     		ChordNode val = entry.getValue();
 			
 			if(val.getKey() >= key){
@@ -256,12 +286,13 @@ public class ChordNodeServiceHandler implements ChordNodeService.Iface{
     	
     	if (!successorfound) {
 			temp = nodeMap.firstEntry().getValue();
-		}
+		}*/
     	
-    	return temp;
+    	//return temp;
     }
     
     public ChordNode find_predecessorDHT (int key) {
+    	writer.println("Inside find_predecessor for key: " + key);
     	
     	ChordNode temp = null;
     	boolean predecessorfound = false;
@@ -331,6 +362,30 @@ public class ChordNodeServiceHandler implements ChordNodeService.Iface{
 			fingerTable.add(createFingerTableInfo(start, n));
 		}
 		
+    }
+    
+    private ChordNode call_get_successor(String hostname, int portnumber) {
+        ChordNode n = new ChordNode();
+
+        if((hostname.equals(this.hostname)) && (portnumber == this.portnumber)){
+        	n = this.get_successor();
+        	return n;
+        }
+        try {
+            TTransport transport;
+            transport = new TSocket(hostname, portnumber);
+            transport.open();
+            //System.out.println("Open.transport sucess!!");
+
+            TProtocol protocol = new  TBinaryProtocol(transport);
+            ChordNodeService.Client client = new ChordNodeService.Client(protocol);
+            n = client.get_successor();
+
+            transport.close();
+        } catch (TTransportException e) {e.printStackTrace();}
+        catch (TException e){e.printStackTrace();}   
+
+        return n;
     }
 	
 }

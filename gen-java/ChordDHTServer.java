@@ -41,7 +41,7 @@ public class ChordDHTServer{
     }
     
     try {
-        handler = new ChordNodeServiceHandler(hostname, portnumber);
+        handler = new ChordNodeServiceHandler(hostname, portnumber, nodename);
         processor = new ChordNodeService.Processor(handler);
         
         handler.setMasterURL(args[4]);

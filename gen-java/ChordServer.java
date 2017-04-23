@@ -41,12 +41,13 @@ public class ChordServer {
     }
 
     try {
-      handler = new ChordNodeServiceHandler(hostname, portnumber);
+      handler = new ChordNodeServiceHandler(hostname, portnumber,nodename);
       processor = new ChordNodeService.Processor(handler);
       
       handler.setMasterURL(args[4]);
       handler.setIsMaster(isMaster);
       handler.joinDHT(isMaster);
+      
       
     Runnable simple = new Runnable() {
       public void run() {

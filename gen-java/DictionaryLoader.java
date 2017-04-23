@@ -50,7 +50,7 @@ public class DictionaryLoader {
             TProtocol protocol = new  TBinaryProtocol(transport);
             ChordNodeService.Client client = new ChordNodeService.Client(protocol);
 
-            client.insert(word, meaning);
+            client.insert(word, meaning, true);
             System.out.println("Inserted " + word + " at " + portname);
 
             transport.close();

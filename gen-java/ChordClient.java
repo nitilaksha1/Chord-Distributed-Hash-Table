@@ -54,7 +54,7 @@ public class ChordClient {
             client = new ChordNodeService.Client(protocol);
 
             System.out.println("Trying to lookup word at " + tempportname);
-            meaning = client.lookup(word.trim());
+            meaning = client.lookup(word.trim(), true);
 
         } catch (TTransportException e) {e.printStackTrace();}
         catch (TException e) {e.printStackTrace();}

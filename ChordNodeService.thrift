@@ -20,11 +20,12 @@ struct ChordNode{
 service ChordNodeService {
 
    string   find_node                 (1:i32 key, 2:bool traceFlag),
-   void     insert                    (1:string word, 2:string meaning),
-   string   lookup                    (1:string word),
+   void     insert                    (1:string word, 2:string meaning, 3:bool traceFlag),
+   string   lookup                    (1:string word, 2:bool traceFlag),
    void     printFingerTable          (),
-
+   ChordNode get_successor			  (),
    NodeInfo join                      (1:string url),
+   void join_done(),
 
    void insertNewNode(1:ChordNode n)       
 }

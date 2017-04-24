@@ -12,12 +12,15 @@ Name : Nitilaksha Halakatti
 Id   : halak004
 
 
+COMPILATION INSTRUCTIONS:
+--------------------------
+-> Type ./compile.sh from the main ChordDHT folder to compile all the files
+
 RUNNING INSTRUCTIONS:
 ----------------------
--> Run compile.sh script to compile all the programs.
--> The compile.sh will also start and run all the chord nodes.
--> Next the script client.sh has to executed. This will run the dictionary loader to add all keys to DHT and it will launch the client.
--> Once the client is launched a menu-driven interface is presented
+-> The compile.sh will also start the node-0
+-> Next type source start_nodes.sh to start the other 7 chord nodes.
+-> Type source start_client.sh to start the dictionary loader and the client.
 -> The options display 1 for lookup of a word 2 to exit the client.
 -> On choosing 1 for lookup, enter a word that has to be queried in the DHT.
 -> If the word is found the meaning is returned els Not Found is returned.
@@ -26,7 +29,6 @@ RUNNING INSTRUCTIONS:
 CUSTOMIZING CHORD NODES:
 -------------------------
 
--> Execute the compile.sh script to compile and run the servers.
 -> In case the predefined parametes in the script need to be changed the script can be modified.
 -> The command to run the server is :
 	- java -cp ".:libs/libthrift-0.9.1.jar:libs/slf4j-api-1.7.12.jar" ChordServer <hostname> <portnumber> <nodename> <isMasterNode> <MasterURL>
@@ -43,6 +45,7 @@ CUSTOMIZING DICTIONARY LOADER:
 	- java -cp ".:libs/libthrift-0.9.1.jar:libs/slf4j-api-1.7.12.jar" DictionaryLoader <MasterURL> <sample-file.txt>
 	- <MasterURL> This values specifies the URL of the node0 or master node.The URL must be of the form "<hostname>:<portnumber>" inorder to be parsed cor     rectly by the program.
 	- <sample-file.txt> This is the file which contains the word-meaning pairs that have to be distributed among different nodes in chord ring.
+
 
 CUSTOMIZING CLIENT:
 ---------------------

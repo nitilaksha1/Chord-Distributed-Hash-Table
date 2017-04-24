@@ -37,7 +37,7 @@ public class ChordClient {
             TProtocol protocol = new  TBinaryProtocol(transport);
             ChordNodeService.Client client = new ChordNodeService.Client(protocol);
 
-            System.out.println("Hascode for word :" + word + " is " + getHashCode(word));
+            //System.out.println("Hascode for word :" + word + " is " + getHashCode(word));
             
             String url = client.find_node(getHashCode(word), false);
             String[] arr = url.split(":");
@@ -53,7 +53,7 @@ public class ChordClient {
             protocol = new  TBinaryProtocol(transport);
             client = new ChordNodeService.Client(protocol);
 
-            System.out.println("Trying to lookup word at " + tempportname);
+            //System.out.println("Trying to lookup word at " + tempportname);
             meaning = client.lookup(word.trim(), true);
 
         } catch (TTransportException e) {e.printStackTrace();}
@@ -70,7 +70,7 @@ public class ChordClient {
         int portname = Integer.parseInt(arr[1]);
         Scanner scan =  new Scanner(System.in);
 
-        System.out.println("Enter 1 to lookup, 2 to exit");
+        System.out.println("Enter 1 to Lookup, 2 to Print DHT Information, 3 to exit");
 
         while (true) {
 
@@ -80,10 +80,27 @@ public class ChordClient {
             if (choice == 1) {
                 System.out.println("Enter a word: ");
                 System.out.println("Result: " + lookupWord(hostname, portname, scan.next()));
-            } else if (choice == 2) {
+            } else if (choice == 3) {
                 System.out.println("Exiting..");
                 break;
-            }
+            } else if (choice == 2) {
+				try {
+					TTransport transport;
+					transport = new TSocket(hostname, portname);
+					transport.open();
+					//System.out.println("Open.transport sucess!!");
+
+					TProtocol protocol = new  TBinaryProtocol(transport);
+					ChordNodeService.Client client = new ChordNodeService.Client(protocol);
+
+					client.printDHT();
+
+					transport.close();
+
+				} catch (TTransportException e) {e.printStackTrace();}
+				catch (TException e) {e.printStackTrace();}
+
+			}
         }
 
     }

@@ -23,11 +23,10 @@ service ChordNodeService {
    void     insert                    (1:string word, 2:string meaning, 3:bool traceFlag),
    string   lookup                    (1:string word, 2:bool traceFlag),
    void     printFingerTable          (),
+   void		printDHT				  (),
    ChordNode get_successor			  (),
    NodeInfo join                      (1:string url),
-   oneway void join_done(),
-
-
+   void 	join_done(),
    void insertNewNode(1:ChordNode n)       
 }
 

@@ -51,7 +51,7 @@ public class DictionaryLoader {
             ChordNodeService.Client client = new ChordNodeService.Client(protocol);
 
             client.insert(word, meaning, true);
-            System.out.println("Inserted " + word + " at " + portname);
+            ///System.out.println("Inserted " + word + " at " + portname);
 
             transport.close();
         } catch (TTransportException e) {e.printStackTrace();}

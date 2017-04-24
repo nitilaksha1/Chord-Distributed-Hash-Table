@@ -1,3 +1,5 @@
+fuser -k 10000/tcp 15000/tcp 20000/tcp 25000/tcp 30000/tcp 35000/tcp 40000/tcp
+
 cd gen-java
 
 java -cp ".:libs/libthrift-0.9.1.jar:libs/slf4j-api-1.7.12.jar" ChordDHTServer localhost 10000 node1 false localhost:9090 &

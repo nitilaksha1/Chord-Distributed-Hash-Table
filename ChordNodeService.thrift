@@ -25,7 +25,8 @@ service ChordNodeService {
    void     printFingerTable          (),
    ChordNode get_successor			  (),
    NodeInfo join                      (1:string url),
-   void join_done(),
+   oneway void join_done(),
+
 
    void insertNewNode(1:ChordNode n)       
 }

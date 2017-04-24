@@ -172,7 +172,6 @@ public class ChordNodeServiceHandler implements ChordNodeService.Iface{
                 //this.successor = nodeinfo.getFingertable().get(1).node ;
                 System.out.println(nodeinfo.getNodeMap().keySet());
                 this.nodeMap = new TreeMap<Integer,ChordNode>(nodeinfo.getNodeMap());
-                
                 constructInitTable();
                 System.out.println("New Node Finger Table after Initialization: ");
                 printFingerTable();
@@ -265,8 +264,8 @@ public class ChordNodeServiceHandler implements ChordNodeService.Iface{
             printFingerTable();
             
             info.setNodeMap(nodeMap);
-        
-    	    return info;
+        lock.unlock();
+        return info;
     }
     
     

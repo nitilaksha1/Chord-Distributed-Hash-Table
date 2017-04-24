@@ -45,10 +45,9 @@ public class ChordDHTServer{
         processor = new ChordNodeService.Processor(handler);
         handler.setMasterURL(args[4]);
         handler.setIsMaster(isMaster);
-        handler.joinDHT(isMaster);
-        
+
         if(!isMaster){
-            handler.call_join_done();        	
+            //handler.call_join_done();
         }
 
 
@@ -62,6 +61,8 @@ public class ChordDHTServer{
       };      
        
       new Thread(simple).start();
+        handler.joinDHT(isMaster);
+
     } catch (Exception x) {
         x.printStackTrace();
       }

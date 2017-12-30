@@ -61,8 +61,7 @@ public class ChordClient {
 
         return meaning;
     }
-
-    //java -cp ".:libs/libthrift-0.9.1.jar:libs/slf4j-api-1.7.12.jar" ChordClient localhost:9090 
+	
     public static void main(String[] args) {
         String chordnodeurl = args[0];
         String[] arr = chordnodeurl.split(":");

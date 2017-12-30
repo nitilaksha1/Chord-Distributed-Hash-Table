@@ -1,30 +1,22 @@
 # ChordDHT
-TEAM INFORMATION:
---------------------
 
-Member 1:
-----------
+###Member 1:
 Name : Akshay Mulkalwar
-Id   : mulka002
 
-Member2:
----------
+###Member2:
 Name : Nitilaksha Halakatti
-Id   : halak004
 
 
-COMPILATION INSTRUCTIONS:
---------------------------
--> Type ./compile.sh from the main ChordDHT folder to compile all the files
+##COMPILATION INSTRUCTIONS:
+* Type ./compile.sh from the main ChordDHT folder to compile all the files
 
-RUNNING INSTRUCTIONS:
-----------------------
--> The compile.sh will also start the node-0
--> Next type source start_nodes.sh to start the other 7 chord nodes.
--> Type source start_client.sh to start the dictionary loader and the client.
--> The options display 1 for lookup of a word 2 to exit the client.
--> On choosing 1 for lookup, enter a word that has to be queried in the DHT.
--> If the word is found the meaning is returned els Not Found is returned.
+##RUNNING INSTRUCTIONS:
+*The compile.sh will also start the node-0
+*Next type source start_nodes.sh to start the other 7 chord nodes.
+*Type source start_client.sh to start the dictionary loader and the client.
+*The options display 1 for lookup of a word 2 to exit the client.
+*On choosing 1 for lookup, enter a word that has to be queried in the DHT.
+*If the word is found the meaning is returned els Not Found is returned.
 
 
 CUSTOMIZING CHORD NODES:

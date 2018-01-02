@@ -17,10 +17,6 @@ public class ChordDHTServer{
 	public static ChordNodeServiceHandler handler;
 	public static ChordNodeService.Processor processor;
 
-	public ChordDHTServer(){
-		
-	}
-	
   public static void main(String [] args) {
 	
     if (args.length < 4) {
@@ -45,28 +41,21 @@ public class ChordDHTServer{
         processor = new ChordNodeService.Processor(handler);
         handler.setMasterURL(args[4]);
         handler.setIsMaster(isMaster);
-
-        if(!isMaster){
-            //handler.call_join_done();
-        }
-
-
-
         
-
-      Runnable simple = new Runnable() {
-        public void run() {
-          someMethod(processor,portnumber, handler);
-        }
-      };      
+        Runnable simple = new Runnable() {
+          public void run() {
+            someMethod(processor,portnumber, handler);
+          }
+        };      
        
-      new Thread(simple).start();
-        handler.joinDHT(isMaster);
+        new Thread(simple).start();
+          handler.joinDHT(isMaster);
 
-    } catch (Exception x) {
+    } 
+    catch (Exception x) {
         x.printStackTrace();
-      }
     }
+  }
 
   public static void someMethod(ChordNodeService.Processor processor, int portnumber, ChordNodeServiceHandler handler) {
 	    try {
@@ -80,6 +69,4 @@ public class ChordDHTServer{
 	      e.printStackTrace();
 	    }
 	  }
-	
-
 }

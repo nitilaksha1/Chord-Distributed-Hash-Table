@@ -32,12 +32,8 @@ public class ChordClient {
             TTransport transport;
             transport = new TSocket(hostname, portname);
             transport.open();
-            //System.out.println("Open.transport sucess!!");
-
             TProtocol protocol = new  TBinaryProtocol(transport);
             ChordNodeService.Client client = new ChordNodeService.Client(protocol);
-
-            //System.out.println("Hascode for word :" + word + " is " + getHashCode(word));
             
             String url = client.find_node(getHashCode(word), false);
             String[] arr = url.split(":");
@@ -48,15 +44,14 @@ public class ChordClient {
 
             transport = new TSocket(temphostname, tempportname);
             transport.open();
-            //System.out.println("Open.transport sucess!!");
 
             protocol = new  TBinaryProtocol(transport);
             client = new ChordNodeService.Client(protocol);
 
-            //System.out.println("Trying to lookup word at " + tempportname);
             meaning = client.lookup(word.trim(), true);
 
-        } catch (TTransportException e) {e.printStackTrace();}
+        } 
+        catch (TTransportException e) {e.printStackTrace();}
         catch (TException e) {e.printStackTrace();}
 
         return meaning;
@@ -87,21 +82,14 @@ public class ChordClient {
 					TTransport transport;
 					transport = new TSocket(hostname, portname);
 					transport.open();
-					//System.out.println("Open.transport sucess!!");
-
 					TProtocol protocol = new  TBinaryProtocol(transport);
 					ChordNodeService.Client client = new ChordNodeService.Client(protocol);
-
 					client.printDHT();
-
 					transport.close();
-
-				} catch (TTransportException e) {e.printStackTrace();}
+				} 
+                catch (TTransportException e) {e.printStackTrace();}
 				catch (TException e) {e.printStackTrace();}
-
 			}
         }
-
     }
-
 }

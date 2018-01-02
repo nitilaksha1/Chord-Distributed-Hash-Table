@@ -41,7 +41,6 @@ public class ChordNodeServiceHandler implements ChordNodeService.Iface{
         this.portnumber = portnumber;
         isMaster = false;
         nodekey = getHashCode(hostname + ":" + portnumber);
-        //System.out.println("INCONSTRUCTOR:  "+ nodekey);
         nodeMap = new TreeMap<Integer,ChordNode>();
         successor = new ChordNode();
         fingerTable = new ArrayList<FingerTableInfo>();
@@ -66,7 +65,6 @@ public class ChordNodeServiceHandler implements ChordNodeService.Iface{
 		printFingerTable();
 		
 		System.out.println();
-		//System.out.println("-----------------------------------------------------------");
 
 		if (isMaster) {
 			multicastprintDHT();
@@ -78,15 +76,9 @@ public class ChordNodeServiceHandler implements ChordNodeService.Iface{
 
 		for(Map.Entry<Integer,ChordNode> entry : nodeMap.entrySet()){
             	ChordNode val = entry.getValue();
-				//System.out.println(val);
-
-    			if(val.getPortnumber() != this.portnumber && this.hostname.equals(val.getHostname())){
-    				
+    			if(val.getPortnumber() != this.portnumber && this.hostname.equals(val.getHostname()))
     				call_print_DHT(val.getHostname(), val.getPortnumber());
-    			}
-    			
     	}
-
 	}
 
 	private void call_print_DHT (String hostname, int portname) {
@@ -95,40 +87,34 @@ public class ChordNodeServiceHandler implements ChordNodeService.Iface{
 				TTransport transport;
 				transport = new TSocket(hostname, portname);
 				transport.open();
-				//System.out.println("Open.transport sucess!!");
-
 				TProtocol protocol = new  TBinaryProtocol(transport);
 				ChordNodeService.Client client = new ChordNodeService.Client(protocol);
-				
 				client.printDHT();
-
 				transport.close();
-			} catch (TTransportException e) {e.printStackTrace();}
+			} 
+            catch (TTransportException e) {e.printStackTrace();}
 			catch (TException e){e.printStackTrace();}   
-
-		
 	}
 	
     private static int getHashCode(String url){
         int hash = url.hashCode() % (int)Math.pow(2, m);
-
+        
         if (hash < 0) {
             hash = hash >>> 1;
         }
+        
         hash = hash % (int)Math.pow(2, m);
         return hash;
-
     }
     
     private int BigIntWrapAround(int nodekey, int i) {
     	
     	int temp = nodekey + (int)Math.pow(2, i - 1);
     	
-    	if (temp < 0) {
+    	if (temp < 0)
     		temp = (temp >>> 1) % (int)Math.pow(2, m);
-    	} else {
+        else
     		temp = temp % (int)Math.pow(2, m);
-    	}
     	
     	return temp;
     	
@@ -174,7 +160,6 @@ public class ChordNodeServiceHandler implements ChordNodeService.Iface{
     	writer.println("Inside insert");
     	writer.flush();
         map.put(word,meaning);
-        //writer.println("Inserted word " + word);
     }
 
     public String lookup(String word, boolean traceFlag){
@@ -233,38 +218,25 @@ public class ChordNodeServiceHandler implements ChordNodeService.Iface{
         	 
     	ChordNode successorkeynode = new ChordNode();
     	successorkeynode.setKey(successor.getKey());
-    	
         int successorkey = successor.getKey();
-        //System.out.println("Sucessor Key: "+successorkey);
-        //System.out.println("Node key: "+nodekey);
         
         ChordNode temp = n;
         boolean isfirst = true;
         String temphostname = hostname;
         int tempportnumber = portnumber;
-        //System.out.println("Inside find predecessor");
-        //System.out.println("Key: " + key);
-        //System.out.println("n.getKey()" + n.getKey());
         
-        //TODO: In the first iteration socket will be created with resepct to itself. Will this be allowed?
+        //TODO: In the first iteration socket will be created with respect to itself. Will this be allowed?
         while (checkNodeinInterval(key, n, successorkeynode)) {
         	
         	temp = closest_preceding_finger(key);
-        	
-        	//System.out.println("Closest preceding node: "+ temp.getKey());
             temphostname = temp.getHostname();
             tempportnumber = temp.getPortnumber();
-            //System.out.println("Successor node: "+ successorkeynode.getKey());
             successorkey = successorkeynode.getKey();
-            //System.out.println("Successorkey: "+ successorkey);
             n = temp;
             
             if (temp.getKey() == successorkey)
             	break;
-            
         }
-
-        //System.out.println("Ending Find_Preecessor");
         
         return temp;
     }
@@ -295,31 +267,19 @@ public class ChordNodeServiceHandler implements ChordNodeService.Iface{
 
                 TTransport transport;
                 transport = new TSocket(masterhostname, masterportname);
-                //System.out.println("Master: "+ masterhostname + " :" + masterportname);
-                //System.out.println("Local: "+ this.hostname + " :" + this.portnumber);
                 transport.open();
-                //System.out.println("Open.transport sucess!!");
-                //System.out.println("joinDHT!!");
-
                 TProtocol protocol = new  TBinaryProtocol(transport);
                 ChordNodeService.Client client = new ChordNodeService.Client(protocol);
-                
                 nodeinfo = client.join(hostname + ":" + portnumber);
-                
                 this.nodekey = nodeinfo.getKey();
-                //this.predecessor = nodeinfo.getPredecessor();
-                //this.fingerTable = nodeinfo.getFingertable();
-                //this.successor = nodeinfo.getFingertable().get(1).node ;
-                //System.out.println(nodeinfo.getNodeMap().keySet());
                 this.nodeMap = new TreeMap<Integer,ChordNode>(nodeinfo.getNodeMap());
                 constructInitTable();
-                //System.out.println("New Node Finger Table after Initialization: ");
-                //printFingerTable();
-                
                 transport.close();
-            } catch (TTransportException e) {e.printStackTrace();}
+            } 
+            catch (TTransportException e) {e.printStackTrace();}
             catch (TException e){e.printStackTrace();}    
-        } else {//Case: The current node is Node-0
+        } 
+        else {//Case: The current node is Node-0
 
         	ChordNode n = new ChordNode();
             n.setKey(nodekey);
@@ -336,47 +296,34 @@ public class ChordNodeServiceHandler implements ChordNodeService.Iface{
             this.successor = n;
             nodeMap.put(nodekey, n);
         }
-        
-        //System.out.println("Join DST Done");
     }
     
     private void call_insert_newnode (String hostname, int portnumber, ChordNode n) {
-        //System.out.println("Node h/p:"+ this.hostname+ ":" + this.portnumber);
-        //System.out.println("New h/p:"+ hostname+ ":" + portnumber);
-        //System.out.println("New h/p:"+ hostname+ ":" + portnumber);
 
     	try {
             TTransport transport;
             transport = new TSocket(hostname, portnumber);
             transport.open();
-            //System.out.println("Open.transport sucess!!");
 
             TProtocol protocol = new  TBinaryProtocol(transport);
             ChordNodeService.Client client = new ChordNodeService.Client(protocol);
-            //System.out.println("call insert newnode!!");
-
             client.insertNewNode(n);
-
             transport.close();
-        } catch (TTransportException e) {e.printStackTrace();}
+        }
+        catch (TTransportException e) {e.printStackTrace();}
         catch (TException e){e.printStackTrace();}   
     }
     
     public void insertNewNode (ChordNode node) {
     	nodeMap.put(node.getKey(), node);
     	constructInitTable();
-    	
-    	//System.out.println("Finger Table after Adding New Node: ");
-        //printFingerTable();
     }
     
     public NodeInfo join (String url) {
 		NodeInfo info = new NodeInfo();
 
     	lock.lock();
-    	//System.out.println("Join called by "+ url);
 
-        	
         	info.setKey(getHashCode(url));
         	
         	String [] urlinfo = url.split(":");
@@ -396,13 +343,9 @@ public class ChordNodeServiceHandler implements ChordNodeService.Iface{
     			}
     			
     		}
+
             nodeMap.put(getHashCode(url), n);
-            
             constructInitTable();
-            
-            //System.out.println("Master Finger Table after Adding New Node: ");
-            //printFingerTable();
-            
             info.setNodeMap(nodeMap);
             
         lock.unlock();
@@ -411,13 +354,10 @@ public class ChordNodeServiceHandler implements ChordNodeService.Iface{
     
     
     public void join_done(){
-    	//System.out.println("Join done");
     	lock.unlock();
     }
     
     public void call_join_done(){
-    	//System.out.println("Inside Call join done of "+ this.portnumber);
-
     	try{
     		TTransport transport;
 	        transport = new TSocket(masterhostname, masterportname);
@@ -427,35 +367,35 @@ public class ChordNodeServiceHandler implements ChordNodeService.Iface{
 	        ChordNodeService.Client client = new ChordNodeService.Client(protocol);
 	        
 	        client.join_done();
-        transport.close();
+            transport.close();
 	    } catch (TTransportException e) {e.printStackTrace();}
 	    catch (TException e){e.printStackTrace();}   
-
     }
     
     private FingerTableInfo createFingerTableInfo (int start, ChordNode n) {
-    	
     	return new FingerTableInfo(start, n);
-    	
     }
     
     public ChordNode find_successorDHT (int key) {
-    	writer.println("Inside find_successor for key: " + key);
-    	writer.flush();
+    	
     	ChordNode temp = null;
     	boolean successorfound = false;
     	
+        writer.println("Inside find_successor for key: " + key);
+        writer.flush();
     	ChordNode pred = find_predecessorDHT(key); 
     	
     	return call_get_successor (pred.getHostname(), pred.getPortnumber());
     }
     
     public ChordNode find_successorDHT_construct (int key) {
-    	writer.println("Inside find_successor for key: " + key);
-    	writer.flush();
+    	
     	ChordNode temp = null;
     	boolean successorfound = false;
     	
+        writer.println("Inside find_successor for key: " + key);
+        writer.flush();
+
     	for(Map.Entry<Integer,ChordNode> entry : nodeMap.entrySet()){
     		ChordNode val = entry.getValue();
 			
@@ -476,12 +416,11 @@ public class ChordNodeServiceHandler implements ChordNodeService.Iface{
     
     public ChordNode find_predecessorDHT (int key) {
     	writer.println("Inside find_predecessor for key: " + key);
-    	writer.flush();
-    	
+        writer.flush();
+
     	ChordNode temp = null;
     	boolean predecessorfound = false;
     	ArrayList<Integer> keys = new ArrayList<Integer>(nodeMap.keySet());
-        
     	ChordNode first = nodeMap.get(keys.get(keys.size() -1));
 		
 		for(int i=keys.size()-1; i>=0;i--){
@@ -501,9 +440,7 @@ public class ChordNodeServiceHandler implements ChordNodeService.Iface{
     }
     
     public void constructInitTable(){
-    	
     	fingerTable = new ArrayList<FingerTableInfo>();
-    	
     	boolean successorfound = false;
     	boolean predecessorfound = false;
     	
@@ -559,7 +496,6 @@ public class ChordNodeServiceHandler implements ChordNodeService.Iface{
             TTransport transport;
             transport = new TSocket(hostname, portnumber);
             transport.open();
-            //System.out.println("Open.transport sucess!!");
 
             TProtocol protocol = new  TBinaryProtocol(transport);
             ChordNodeService.Client client = new ChordNodeService.Client(protocol);

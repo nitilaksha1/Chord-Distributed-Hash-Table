@@ -1,12 +1,5 @@
 # ChordDHT
 
-### Member 1:
-Name : Akshay Mulkalwar
-
-### Member2:
-Name : Nitilaksha Halakatti
-
-
 ## Compile Instructions:
 * Type ./compile.sh from the main ChordDHT folder to compile all the files
 
